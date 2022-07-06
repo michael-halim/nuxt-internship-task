@@ -13,10 +13,12 @@
         <div class="row">
           <div class="col-12 sub-title">Recipes</div>
         </div>
-        <Recipe
-          :recipeList="recipeList"
-          @changeIndex="changeSelectedIndex($event)"
-        />
+        <ul>
+          <RecipeIngredient
+            :dataInput="recipeList"
+            @changeIndex="changeSelectedIndex($event)"
+          />
+        </ul>
       </div>
 
       <div class="col-1"></div>
@@ -30,9 +32,9 @@
           <div class="col-12 sub-title">Ingredients</div>
         </div>
         <ol id="ingredients-list">
-          <Ingredient
-            :ingredientsList="ingredientsList"
-            :selectedRecipeIndex="selectedRecipeIndex"
+          <RecipeIngredient
+            :dataInput="ingredientsList[selectedRecipeIndex]"
+            @changeIndex="changeSelectedIndex($event)"
           />
         </ol>
       </div>
