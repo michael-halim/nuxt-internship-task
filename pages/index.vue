@@ -6,70 +6,32 @@
       >
     </b-container>
     <Food
-      v-for="item in itemList"
+      v-for="(item, index) in itemList"
       :options="item.options"
-      :key="item.id"
+      :key="index"
       :selectedSize="selectedSize"
       :item="item"
-      :name="item.namaMakanan"
+      :name="item.recipeName"
       @changeSelected="changeSelected($event)"
     />
   </div>
 </template>
 
 <script>
+import axios from "axios";
 export default {
+  async fetch() {
+    const fetchData = await axios.get(
+      `https://6b29a167-3f3e-45e8-83d9-043a5685490f.mock.pstmn.io/getMenuAllByRecipeID`
+    );
+    console.log(fetchData);
+    this.itemList = fetchData.data.completedRecipeList;
+  },
   data() {
     return {
       selectedSize: "small",
       selectedId: 1,
-      itemList: [
-        {
-          id: 1,
-          namaMakanan: "Nasi Padang",
-          options: [
-            { text: "Small", value: "small" },
-            { text: "Medium", value: "medium" },
-            { text: "Large", value: "large" },
-          ],
-          prices: {
-            small: 10,
-            medium: 15,
-            large: 25,
-          },
-          ingredientsList: ["Sapi", "Babi", "Rendang", "Santan"],
-        },
-        {
-          id: 1,
-          namaMakanan: "Nasi Padang",
-          options: [
-            { text: "Small", value: "small" },
-            { text: "Medium", value: "medium" },
-            { text: "Large", value: "large" },
-          ],
-          prices: {
-            small: 10,
-            medium: 15,
-            large: 25,
-          },
-          ingredientsList: ["Sapi", "Babi", "Rendang", "Santan"],
-        },
-        {
-          id: 1,
-          namaMakanan: "Nasi Padang",
-          options: [
-            { text: "Small", value: "small" },
-            { text: "Medium", value: "medium" },
-            { text: "Large", value: "large" },
-          ],
-          prices: {
-            small: 10,
-            medium: 15,
-            large: 25,
-          },
-          ingredientsList: ["Sapi", "Babi", "Rendang", "Santan"],
-        },
-      ],
+      itemList: [],
     };
   },
   methods: {

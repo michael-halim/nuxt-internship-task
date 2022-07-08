@@ -6,132 +6,32 @@
         <b-form-group
           id="input-group-2"
           label="Nama Makanan"
-          label-for="namaMakanan"
+          label-for="recipeName"
           class="pt-3"
         >
           <b-form-input
-            id="namaMakanan"
-            v-model="form.namaMakanan"
+            id="recipeName"
+            v-model="form.recipeName"
             placeholder="Masukkan Nama Makanan"
-            required
           ></b-form-input>
         </b-form-group>
 
-        <!-- Label dan Input Foto Makanan -->
-        <b-form-group
-          id="input-group-2"
-          label="Foto Makanan"
-          label-for="fotoMakanan"
-          ><b-form-file
-            id="fotoMakanan"
-            v-model="form.foto"
-            :state="Boolean(form.foto)"
-            placeholder="Pilih Foto Makanan"
-            drop-placeholder="Drop file here..."
-          ></b-form-file>
-        </b-form-group>
-
-        <b-form-group label="Deskripsi Makanan" label-for="deskripsi">
+        <b-form-group label="Deskripsi Makanan" label-for="recipeDescription">
           <b-form-textarea
-            id="deskripsi"
-            v-model="form.deskripsi"
+            id="recipeDescription"
+            v-model="form.recipeDescription"
             size="sm"
             placeholder="Makanan ini adalah makanan khas dari solo. Karakteristik makanan ini...."
           ></b-form-textarea>
         </b-form-group>
 
-        <!-- Size dan Harga  1 -->
-        <b-form inline class="mt-4">
-          <b-form-group
-            label="Size Makanan 1"
-            label-for="sizeMakanan1"
-            class="mr-5"
-          >
-            <b-form-input
-              id="sizeMakanan1"
-              v-model="form.sizeMakanan1"
-              placeholder="Small"
-              class="ml-3"
-              required
-            ></b-form-input>
-          </b-form-group>
-
-          <b-form-group
-            label="Harga Makanan ($)"
-            label-for="hargaMakanan1"
-            class=""
-          >
-            <b-form-input
-              id="hargaMakanan1"
-              v-model="form.hargaMakanan1"
-              placeholder="10"
-              class="ml-3"
-              required
-            ></b-form-input>
-          </b-form-group>
-        </b-form>
-
-        <!-- Size dan Harga  2 -->
-        <b-form inline class="mt-3">
-          <b-form-group
-            label="Size Makanan 2"
-            label-for="sizeMakanan2"
-            class="mr-5"
-          >
-            <b-form-input
-              id="sizeMakanan2"
-              v-model="form.sizeMakanan2"
-              placeholder="Medium"
-              class="ml-3"
-              required
-            ></b-form-input>
-          </b-form-group>
-
-          <b-form-group
-            label="Harga Makanan ($)"
-            label-for="hargaMakanan2"
-            class=""
-          >
-            <b-form-input
-              id="hargaMakanan2"
-              v-model="form.hargaMakanan2"
-              placeholder="15"
-              class="ml-3"
-              required
-            ></b-form-input>
-          </b-form-group>
-        </b-form>
-
-        <!-- Size dan Harga 3 -->
-        <b-form inline class="mt-3">
-          <b-form-group
-            label="Size Makanan 3"
-            label-for="sizeMakanan3"
-            class="mr-5"
-          >
-            <b-form-input
-              id="sizeMakanan3"
-              v-model="form.sizeMakanan3"
-              placeholder="Large"
-              class="ml-3"
-              required
-            ></b-form-input>
-          </b-form-group>
-
-          <b-form-group
-            label="Harga Makanan ($)"
-            label-for="hargaMakanan3"
-            class=""
-          >
-            <b-form-input
-              id="hargaMakanan3"
-              v-model="form.hargaMakanan3"
-              placeholder="25"
-              class="ml-3"
-              required
-            ></b-form-input>
-          </b-form-group>
-        </b-form>
+        <b-button @click="addSizePriceForm">Add Size</b-button>
+        <SizePriceForm
+          v-for="(formObject, index) in form.sizePriceForm"
+          :key="index"
+          :formInfo="formObject.info"
+          :formData="formObject.dataForm"
+        />
 
         <!-- Ingredients Makanan -->
         <b-form-group
@@ -143,7 +43,6 @@
             id="ingredientsMakanan"
             v-model="form.ingredientsList"
             placeholder="Masukkan Ingredients Makanan Dipisahkan Koma"
-            required
           ></b-form-input>
         </b-form-group>
 
@@ -158,28 +57,46 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
+  async fetch() {
+    const fetchData = await axios.get(
+      `https://6b29a167-3f3e-45e8-83d9-043a5685490f.mock.pstmn.io/getMenuByRecipeID/${this.$route.params.foodID}`
+    );
+    this.form.recipeName = fetchData.data.recipeName;
+    this.form.recipeDescription = fetchData.data.recipeDescription;
+    this.form.image = fetchData.data.recipeDescription;
+    console.log(Object.keys(fetchData.data.menuList));
+
+    // const variantSizePrice = {
+    //   dataSize: fetchData.data.
+    // }
+    this.form.sizePriceForm[0].dataForm = "";
+  },
   data() {
     return {
       form: {
-        namaMakanan: "",
-        deskripsi: "",
-        foto: null,
+        recipeName: "",
+        recipeDescription: "",
+        image: null,
         ingredientsList: "",
-        sizeMakanan1: "",
-        hargaMakanan1: "",
-        sizeMakanan2: "",
-        hargaMakanan2: "",
-        sizeMakanan3: "",
-        hargaMakanan3: "",
+        sizePriceForm: [
+          {
+            info: {
+              labelNameSize: "Size #" + 1,
+              placeholderSize: "Small/Medium/Large",
+              labelNamePrice: "Harga (Rp)",
+              placeholderPrice: "10",
+            },
+            dataForm: {
+              dataSize: "Super Large",
+              dataPrice: 10,
+            },
+          },
+        ],
       },
-      foods: [
-        { text: "Select One", value: null },
-        "Carrots",
-        "Beans",
-        "Tomatoes",
-        "Corn",
-      ],
+      sizePriceCount: 1,
+
       show: true,
     };
   },
@@ -188,41 +105,43 @@ export default {
       const ingredientsList = this.form.ingredientsList.split(",");
       let data = {
         id: Math.floor((1 + Math.random()) * 0x10000).toString(16),
-        namaMakanan: this.form.namaMakanan,
-        options: [
-          { text: this.form.sizeMakanan1, value: this.form.sizeMakanan1 },
-          { text: this.form.sizeMakanan2, value: this.form.sizeMakanan2 },
-          { text: this.form.sizeMakanan3, value: this.form.sizeMakanan3 },
-        ],
-        prices: {
-          [this.form.sizeMakanan1]: this.form.hargaMakanan1,
-          [this.form.sizeMakanan2]: this.form.hargaMakanan2,
-          [this.form.sizeMakanan3]: this.form.hargaMakanan3,
-        },
+        recipeName: this.form.recipeName,
+        options: [],
+        prices: {},
         ingredientsList: ingredientsList,
+        sizePriceForm: this.sizePriceForm,
       };
 
+      alert(JSON.stringify(data, null, 2));
       event.preventDefault();
       alert(JSON.stringify(data));
     },
     onReset(event) {
       event.preventDefault();
       // Reset our form values
-      this.form.namaMakanan = "";
-      this.form.deskripsi = "";
+      this.form.recipeName = "";
+      this.form.recipeDescription = "";
       this.form.ingredientsList = "";
-      this.form.sizeMakanan1 = "";
-      this.form.hargaMakanan1 = "";
-      this.form.sizeMakanan2 = "";
-      this.form.hargaMakanan2 = "";
-      this.form.sizeMakanan3 = "";
-      this.form.hargaMakanan3 = "";
 
       // Trick to reset/clear native browser form validation state
       this.show = false;
       this.$nextTick(() => {
         this.show = true;
       });
+    },
+    addSizePriceForm() {
+      // alert();
+      this.sizePriceCount++;
+      this.form.sizePriceForm.push({
+        info: {
+          labelNameSize: "Size #" + this.sizePriceCount,
+          labelNamePrice: "Harga (Rp)",
+          placeholderSize: "Small",
+          placeholderPrice: "10",
+        },
+        dataForm: {},
+      });
+      console.log(this.form.sizePriceForm);
     },
   },
 };
